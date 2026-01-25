@@ -4,11 +4,12 @@
   --body-background-Color: #0F766E;
   --main-bg-Color : #FAFAF9;
   --searchBar-background-Color: #ffffff;
-  --banner-bg-Color :#def2ee ;
+  --banner-bg-Color :#d3f3ed ;
   --heading-Color : #FCFAEE;
   --primary-Color :#111827 ;
   --secondary-color : #6B7280;
-  --accent-color :#FEF3C7 ;
+  --accent-color :#FCF8F8;
+  --hover-bg-color :#bcf7eb ;
 
 
   /* --- Spacing var --- */
@@ -58,7 +59,7 @@ body {
 
 body {
   display: grid;
-  grid-template-columns: 150px 1fr 1fr;
+  grid-template-columns: auto 1fr 1fr;
   grid-template-rows: max-content auto max-content;
   gap: 10px;
   grid-template-areas:
@@ -71,6 +72,13 @@ body {
 /* ------- Reusable Clases ------- */
 .flex{
   display: flex;
+}
+h1, h2, h3, h4, h5{
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+p, li{
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  letter-spacing: 1px;
 }
 
 /* ------- Right-content ------- */
@@ -93,8 +101,7 @@ body {
 header h1{
   font-size: var(--font-2xl);
   color: var(--body-background-Color);
-  font-size: var(--font-3xl);
-  font-family: 'Times New Roman', Times, serif;
+  font-size: var(--heading-Size);
   font-weight: 900;
 }
 header input {
@@ -107,30 +114,72 @@ header input {
 }
 
 /* ------- Main ------- */
-.right-content main {
-  
+main{
+  flex-direction: column;
 }
 main .banner{
   width: 100%;
   height: 30vh;
-  flex-direction: column;
-  align-items: start;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-around;
   background-color: var(--banner-bg-Color);
   color: var(--body-background-Color);
   border-radius: var(--border-r-l);
   padding: var(--padding-md) var(--padding-3xl);
 }
-main .banner p{
-  font-size: var(--font-xl);
+main .banner .left-content  p{
+  font-size: var(--font-l);
+  letter-spacing: 1px;
   color: var(--primary-Color);
   font-weight: 500;
   margin-bottom: var(--padding-xs);
 }
-main .banner  h2{
+main .banner  .left-content h2{
   color: var(--primary-Color);
-  font-size: var(--font-3xl);
+  font-size: var(--heading-Size);
+  font-weight: 700;
+}
+main .banner .right-content{
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-evenly;
+  background-color: transparent;
+  padding: var(--padding-md) var(--padding-xl); 
+}
+main .banner .right-content .box{
+  background-color: var(--accent-color);
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--secondary-color);
+  padding: var(--padding-md) var(--padding-xl);
+  border-radius: var(--border-r-md);
+}
+
+/* ------- Category Section ------- */
+.categories{
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--padding-3xl);
+}
+.categories h3{
+  color: var(--body-background-Color);
+  font-size: var(--font-2xl);
   font-weight: 500;
+}
+.categories .categoryList ul{
+  list-style-type: none;
+  color: var(--primary-Color);
+  gap: var(--padding-2xl);
+}
+.categories .categoryList ul li{
+  background-color: var(--banner-bg-Color);
+  padding: var(--padding-s) var(--padding-md);
+  border-radius: var(--border-r-s);
+  font-size: var(--font-md);
+} 
+.categories .categoryList ul li:hover{
+  background-color: var(--hover-bg-color);
 }
 /* ------- Aside ------- */
 aside {
