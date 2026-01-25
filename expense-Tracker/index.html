@@ -9,7 +9,24 @@
 </head>
 
 <body>
-    <aside>aside</aside>
+    <aside>
+        <h3>By Filter : </h3>
+        <div class="filter-section flex">
+            <div class="date-filter">
+                <input type="date" id="dateFilter" min="2026-01-01" max="2026-01-26">
+            </div>
+            <div class="price-filter">
+                <select id="byPrice">
+                    <option value="0-10">$0 to $10</option>
+                    <option value="11-20">$11 to $20</option>
+                    <option value="21-35">$21 to $35</option>
+                    <option value="36-50">$36 to $50</option>
+                    <option value="51-100">$51 to $100</option>
+                    <option value="100+">$100+ </option>
+                </select>
+            </div>
+        </div>
+    </aside>
     <div class="right-content flex">
         <header class="flex">
             <h1>Expense Tracker</h1>
@@ -38,8 +55,29 @@
                 </ul>
             </div>
         </section>
+        <section class="expense-container flex ">
+            <div class="card">
+                <div class="left-content flex">
+                    <h4>Name</h4>
+                    <p>Categor</p>
+                </div>
+                <div class="right-text-area flex">
+                    <p>- $120</p>
+                    <p>12-06-2005</p>
+                </div>
+            </div>
+            <div class="card">
+                <h4>$10</h4>
+                <p>Spend on travel </p>
+                <p>Date </p>
+            </div>
+            <div class="card">
+                <h4>$10</h4>
+                <p>Spend on travel </p>
+                <p>Date </p>
+            </div>
+        </section>
     </div>
-    <footer>footer</footer>
 </body>
 
 </html>

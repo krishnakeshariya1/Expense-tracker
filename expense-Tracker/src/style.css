@@ -20,6 +20,7 @@
   --padding-xl: 1.8rem;
   --padding-2xl: 2rem;
   --padding-3xl: 2.4rem;
+  --card-padding : 5rem;
 
   /* --- font-size var --- */
   --font-xs: 0.8rem;
@@ -180,6 +181,50 @@ main .banner .right-content .box{
 } 
 .categories .categoryList ul li:hover{
   background-color: var(--hover-bg-color);
+  scale: 1.1;
+}
+.expense-container{
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--padding-l);
+  border: 2px solid var(--secondary-color);
+  border-radius: var(--border-r-l);
+  padding: var(--padding-l) var(--padding-xl);
+}
+.expense-container .card{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* background-color: var(--card-bg-color); */
+  background-color: #E3E3E3;
+  border-radius:var(--border-r-s) ;
+  padding: var(--padding-s) var(--card-padding);
+}
+.expense-container .card .left-content{
+  flex-direction: column;
+  gap: var(--padding-xs);
+  align-items: start;
+}
+.expense-container .card .left-content h4{
+  font-size: var(--font-l);
+  color: var(--primary-Color);
+}
+.expense-container .card .left-content p{
+  font-size: var(--font-md);
+  color: var(--secondary-color);
+}
+.expense-container .card .right-text-area {
+  flex-direction: column;
+  gap: var(--padding-xs);
+  align-items: center;
+}
+.expense-container .card .right-text-area p{
+  font-size: var(--font-md);
+  color: var(--secondary-color);
+}
+.expense-container .card .right-text-area p:first-child {
+  font-size: var(--font-xl);
+  color: red;
 }
 /* ------- Aside ------- */
 aside {
@@ -187,6 +232,34 @@ aside {
   background-color: transparent;
   padding: var(--padding-2xl) var(--padding-l);
   border-radius: var(--padding-l);
+}
+aside .filter-section {
+  padding: var(--padding-2xl) 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--padding-xl);
+}
+aside h3{
+  font-size: var(--font-2xl);
+  margin-bottom: var(--padding-xs);
+}
+aside .date-filter input {
+  padding: var(--padding-s) var(--padding-md);
+  border: 1px solid var(--main-bg-Color);
+  border-radius: var(--border-r-l);
+  background-color: transparent;
+  font-size: var(--font-md);
+  color: var(--main-bg-Color);
+  fill: var(--main-bg-Color);
+}
+aside .price-filter select{
+  padding: var(--padding-s);
+  border: 1px solid var(--main-bg-Color);
+  border-radius: var(--border-r-l);
+  background-color: transparent;
+  color: var(--main-bg-Color);
+  font-size: var(--font-md);
 }
 
 footer {
