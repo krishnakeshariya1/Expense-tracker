@@ -1,14 +1,14 @@
-function Selectors() {
-    const expenseContainer = document.querySelector(".expense-container");
-    let budgetText = document.querySelector("#budget");
-    const categorySelect = document.querySelector("#byPrice");
-    const addExpBtn = document.querySelector("#addExpBtn")
-}
+const expenseContainer = document.querySelector(".expense-container");
+let budgetText = document.querySelector("#budget");
+const categorySelect = document.querySelector("#byPrice");
+const addExpBtn = document.querySelector("#addExpBtn")
+
+
 const expenseArr = JSON.parse(localStorage.getItem("expense")) || [];
 
-function createTask(expense) {
+function createExpenseNode(expense) {
     const card = document.createElement("div");
-    card.className = `card ${expense.isDone ? "done" : "unDone" }`
+    card.className = `card ${expense.isDone ? "done" : "unDone"}`
     card.dataset.id = expense.id;
 
     card.innerHTML = `
@@ -33,3 +33,13 @@ function createTask(expense) {
 
     return card;
 }
+function initialRender() {
+    const fragment = document.createDocumentFragment();
+
+    expenseArr.forEach(exp => {
+        fragment.appendChild(createExpenseNode(exp));
+    });
+
+    expenseContainer.appendChild(fragment)
+}
+initialRender();
