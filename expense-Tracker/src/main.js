@@ -9,6 +9,7 @@ const expenseDateInput = document.querySelector("#expDate");
 
 
 const expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
+const isEditing = null;
 
 function createExpenseNode(expense) {
     const card = document.createElement("div");
@@ -49,7 +50,6 @@ function initialRender() {
 function saveToStorage() {
     localStorage.setItem("expenses", JSON.stringify(expenseArr));
 }
-
 function addExpense() {
     const expName = expenseNameInput.value;
     const expCatg = expenseCategoryInput.value;
@@ -78,5 +78,19 @@ function addExpense() {
     expenseCategoryInput.selectIndex = 0;
 
 }
+function enterEditingMode(expCard, expCardId){
+
+}
+expenseContainer.addEventListener("click",(e)=>{
+    const action = e.target.dataset.action;
+    if(!action) return;
+
+    const expCard = e.target.closest(".card");
+    if(!expCard) return;
+
+    const expCardId = expCard.dataset.id;
+
+    if(action === "edit") enterEditingMode(expCard, expCardId)
+})
 addExpBtn.addEventListener("click",addExpense);
 initialRender();
