@@ -10,9 +10,9 @@
 
 <body>
     <aside>
-        <h3>By Filter : </h3>
         <div class="filter-section flex">
             <div class="date-filter">
+                <h3>By Filter : </h3>
                 <input type="date" id="dateFilter" min="2026-01-01" max="2026-01-26">
             </div>
             <div class="price-filter">
@@ -26,6 +26,18 @@
                 </select>
             </div>
         </div>
+        <div class="addExp">
+            <h4>Add Expense</h4>
+            <input type="text" id="expName" placeholder="enter name of expense">
+            <input type="text" id="expAmount" placeholder="enter amount of expense">
+            <select id="expcategory">
+                <option value="grocery">grocery</option>
+                <option value="rent and bill">rent and bill</option>
+                <option value="tavel and Shopping">travel and shopping</option>
+            </select>
+            <input type="date" id="expDate">
+            <button id="addExpBtn">add Expense</button>
+        </div>
     </aside>
     <div class="right-content flex">
         <header class="flex">
@@ -36,7 +48,7 @@
             <section class="banner flex">
                 <div class="left-content">
                     <p>Your Banlance :</p>
-                    <h2>$300</h2>
+                    <h2 id="budget">$300</h2>
                 </div>
                 <div class="right-content flex">
                     <div class="box">For grocery : $100</div>
@@ -66,18 +78,10 @@
                     <p>12-06-2005</p>
                 </div>
             </div>
-            <div class="card">
-                <h4>$10</h4>
-                <p>Spend on travel </p>
-                <p>Date </p>
-            </div>
-            <div class="card">
-                <h4>$10</h4>
-                <p>Spend on travel </p>
-                <p>Date </p>
-            </div>
         </section>
     </div>
+
+    <script src="./src/main.js"></script>
 </body>
 
 </html>

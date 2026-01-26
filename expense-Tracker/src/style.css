@@ -232,6 +232,9 @@ aside {
   background-color: transparent;
   padding: var(--padding-2xl) var(--padding-l);
   border-radius: var(--padding-l);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 aside .filter-section {
   padding: var(--padding-2xl) 0;
@@ -265,4 +268,34 @@ aside .price-filter select{
 footer {
   background-color: gray;
   grid-area: footer;
+}
+.addExp{
+  padding: var(--padding-xl) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--padding-l);
+}
+.addExp h4{
+  font-size: var(--font-xl);
+}
+.addExp input{
+  display: block;
+  padding: var(--padding-xs) var(--padding-s);
+  border: none;
+  border-radius: var(--padding-xs);
+}
+.addExp select{
+  display: block;
+  padding: var(--padding-xs) var(--padding-s);
+  border-radius: var(--padding-xs);
+}
+.addExp button{
+  padding: var(--padding-xs) var(--padding-s);
+  border-radius: var(--border-r-s);
+  border: none;
+  background-color: var(--banner-bg-Color);
+  font-size: var(--font-md);
+  font-weight: 700;
 }
