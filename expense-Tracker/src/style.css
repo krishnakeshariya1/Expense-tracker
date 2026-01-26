@@ -299,3 +299,15 @@ footer {
   font-size: var(--font-md);
   font-weight: 700;
 }
+.card button{
+  padding: var(--padding-xs) var(--padding-s);
+  border: none;
+  border-radius: var(--border-r-s);
+  background-color: var(--body-background-Color);
+  color: var(--main-bg-Color);
+  font-weight: 700;
+}
+.card .btnArea{
+  align-items: center;
+  gap: var(--padding-md);
+}
