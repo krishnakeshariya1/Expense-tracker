@@ -44,6 +44,23 @@
             <h1>Expense Tracker</h1>
             <input type="search" id="seachBar" placeholder="Search for expense...">
         </header>
+        <div  class="overlay " id="overlay">
+            <div class="input-box">
+                <input type="text" class="expense-name-input" placeholder="Enter expense Name">
+                <select class="expense-category-input">
+                    <option value="grocery">grocery</option>
+                    <option value="rent and bill">rent and bill</option>
+                    <option value="tavel and Shopping">travel and shopping</option>
+                </select>
+                <input type="text" class="amount-input" placeholder="enter amount of expense">
+                <input type="date" class="date-input" placeholder="enter date of expense">
+
+                <div class="button-area">
+                    <button data-action="save">Save</button>
+                    <button data-action="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
         <main class="flex">
             <section class="banner flex">
                 <div class="left-content">
