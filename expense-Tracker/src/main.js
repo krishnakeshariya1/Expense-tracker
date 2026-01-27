@@ -8,10 +8,13 @@ const expenseCategoryInput = document.querySelector("#expcategory");
 const expenseDateInput = document.querySelector("#expDate");
 const inputBox = document.querySelector(".input-box");
 const overlay = document.getElementById('overlay');
+const errorEl = document.querySelector("#errorEl");
 
+const nameRegex = /^[A-Za-z][A-Za-z\s]{1,29}$/;
+const amountRegex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
 
 const expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
-const isEditing = null;
+let isEditing = null;
 
 function createExpenseNode(expense) {
     const card = document.createElement("div");
@@ -48,13 +51,16 @@ function initialRender() {
 function saveToStorage() {
     localStorage.setItem("expenses", JSON.stringify(expenseArr));
 }
+
 function addExpense() {
-    const expName = expenseNameInput.value;
-    const expCatg = expenseCategoryInput.value;
-    const expAmount = expenseAmountInput.value;
+    const expName = expenseNameInput.value.trim();
+    const expCatg = expenseCategoryInput.value.trim();
+    const expAmount = Number(expenseAmountInput.value.trim());
     const expDate = expenseDateInput.value;
 
-    if (!expAmount || !expName || !expCatg || !expDate) return;
+    if (!expCatg || !expDate) return;
+
+    if(!inputValidation(expName, expAmount)) return false;
 
     const expense = {
         name: expName,
@@ -76,14 +82,39 @@ function addExpense() {
     expenseCategoryInput.selectIndex = 0;
 
 }
-function openMessageBox(expCard, expCardId) {
-    
-    overlay.classList.add('open');
-
+function inputValidation(expName, expAmount) {
+    console.log(typeof(expAmount))
+    console.log(expAmount)
+    if(!nameRegex.test(expName) ){
+        errorEl.textContent =
+        "Enter a valide Input (under 30 chars)"
+        return false;
+    }
+    if(!amountRegex.test(expAmount) || expAmount <= 0 || Number.isNaN(expAmount)){
+        errorEl.textContent =
+        "Invalid amount (max 2 decimals)";
+        return false
+    }
+    return true;
+}
+function manageAction(expCard, expCardId) {
     enterEditingMode(expCard, expCardId);
+
+    inputBox.addEventListener("click", (e) => {
+        const action = e.target.dataset.action;
+        if (!action) return;
+
+        if (action === "save") saveExp(expCard, expCardId);
+        if (action === "cancel") closeEditingMode();
+    });
 }
 function enterEditingMode(expCard, expCardId) {
+
+    overlay.classList.add('open');
+
     if (isEditing !== null) return;
+
+    isEditing = expCardId;
 
     const expName = expCard.querySelector(".expense-name")
     const nameInp = document.querySelector(".expense-name-input");
@@ -98,13 +129,23 @@ function enterEditingMode(expCard, expCardId) {
     catgInput.value = expCatg.textContent;
     amountInput.value = expAmount.textContent;
     dateInput.value = expDate.textContent;
-    
+}
 
+function saveExp(expCard, expCardId) {
+    const expName = expCard.querySelector(".expense-name")
+    const nameInp = document.querySelector(".expense-name-input");
+    const expCatg = expCard.querySelector(".expense-catg");
+    const catgInput = document.querySelector(".expense-category-input");
+    const expAmount = expCard.querySelector(".expense-amount");
+    const amountInput = document.querySelector(".amount-input");
+    const expDate = expCard.querySelector(".expense-date");
+    const dateInput = document.querySelector(".date-input");
+
+    expName.textContent = nameInp.value
 }
 function closeEditingMode() {
     overlay.classList.remove("open")
 }
-
 expenseContainer.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
     if (!action) return;
@@ -114,16 +155,8 @@ expenseContainer.addEventListener("click", (e) => {
 
     const expCardId = expCard.dataset.id;
 
-    if (action === "edit") openMessageBox(expCard, expCardId)
+    if (action === "edit") manageAction(expCard, expCardId)
 })
-
-inputBox.addEventListener("click", (e) => {
-    const action = e.target.dataset.action;
-    if(!action) return;
-
-    if(action === "save") return;
-    if(action === "cancel") closeEditingMode();
-});
 
 addExpBtn.addEventListener("click", addExpense);
 initialRender();

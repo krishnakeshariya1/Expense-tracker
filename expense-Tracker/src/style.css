@@ -397,3 +397,7 @@ footer {
   border-radius: var(--border-r-s);
   color: var(--main-bg-Color);
 }
+#errorEl {
+  font-size: var(--font-l);
+  color: red;
+}
