@@ -6,6 +6,8 @@ const expenseNameInput = document.querySelector("#expName");
 const expenseAmountInput = document.querySelector("#expAmount");
 const expenseCategoryInput = document.querySelector("#expcategory");
 const expenseDateInput = document.querySelector("#expDate");
+const inputBox = document.querySelector(".input-box");
+const overlay = document.getElementById('overlay');
 
 
 const expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -28,8 +30,6 @@ function createExpenseNode(expense) {
                 <div class="btnArea flex" >
                 <button data-action="toggle">${expense.isDone ? "Undo" : "Done"}</button>
                 <button data-action="edit">Edit</button>
-                <button data-action="save" hidden>Save</button>
-                <button data-action="cancel" hidden>Cancel</button>
                 <button data-action="delete">Delete</button>
                 </div>
                 `
@@ -76,21 +76,35 @@ function addExpense() {
     expenseCategoryInput.selectIndex = 0;
 
 }
+function openMessageBox(expCard, expCardId) {
+    
+    overlay.classList.add('open');
+
+    enterEditingMode(expCard, expCardId);
+}
 function enterEditingMode(expCard, expCardId) {
     if (isEditing !== null) return;
 
     const expName = expCard.querySelector(".expense-name")
-    const nameInp = expCard.querySelector(".expense-name-input");
+    const nameInp = document.querySelector(".expense-name-input");
     const expCatg = expCard.querySelector(".expense-catg");
-    const catgInput = expCard.querySelector(".expense-category-input");
+    const catgInput = document.querySelector(".expense-category-input");
     const expAmount = expCard.querySelector(".expense-amount");
-    const amountInput = expCard.querySelector(".amount-input");
+    const amountInput = document.querySelector(".amount-input");
     const expDate = expCard.querySelector(".expense-date");
-    const dateInput = expCard.querySelector(".date-input");
-    console.log(expName);
+    const dateInput = document.querySelector(".date-input");
 
+    nameInp.value = expName.textContent;
+    catgInput.value = expCatg.textContent;
+    amountInput.value = expAmount.textContent;
+    dateInput.value = expDate.textContent;
+    
 
 }
+function closeEditingMode() {
+    overlay.classList.remove("open")
+}
+
 expenseContainer.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
     if (!action) return;
@@ -102,12 +116,15 @@ expenseContainer.addEventListener("click", (e) => {
 
     if (action === "edit") openMessageBox(expCard, expCardId)
 })
+
+inputBox.addEventListener("click", (e) => {
+    const action = e.target.dataset.action;
+    if(!action) return;
+
+    if(action === "save") return;
+    if(action === "cancel") closeEditingMode();
+});
+
 addExpBtn.addEventListener("click", addExpense);
 initialRender();
 
-function openMessageBox(expCard, expCardId) {
-    const overlay = document.getElementById('overlay');
-    overlay.classList.add('open');
-
-    enterEditingMode(expCard, expCardId);
-}
