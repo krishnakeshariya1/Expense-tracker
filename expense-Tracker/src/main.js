@@ -27,7 +27,7 @@ function createExpenseNode(expense) {
                     <p class="expense-catg" >${expense.category}</p>
                 </div>
                 <div class="right-text-area flex">
-                    <p class="expense-amount" >- $${expense.amount}</p>
+                   <p> -$<span class="expense-amount" >${expense.amount}</span></p>
                     <p class="expense-date" >${expense.date}</p>
                 </div>
                 <div class="btnArea flex" >
@@ -40,6 +40,7 @@ function createExpenseNode(expense) {
     return card;
 }
 function initialRender() {
+    expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
     expenseArr.forEach(exp => {
@@ -51,7 +52,6 @@ function initialRender() {
 function saveToStorage() {
     localStorage.setItem("expenses", JSON.stringify(expenseArr));
 }
-
 function addExpense() {
     const expName = expenseNameInput.value.trim();
     const expCatg = expenseCategoryInput.value.trim();
@@ -83,8 +83,6 @@ function addExpense() {
 
 }
 function inputValidation(expName, expAmount) {
-    console.log(typeof(expAmount))
-    console.log(expAmount)
     if(!nameRegex.test(expName) ){
         errorEl.textContent =
         "Enter a valide Input (under 30 chars)"
@@ -130,18 +128,32 @@ function enterEditingMode(expCard, expCardId) {
     amountInput.value = expAmount.textContent;
     dateInput.value = expDate.textContent;
 }
-
 function saveExp(expCard, expCardId) {
-    const expName = expCard.querySelector(".expense-name")
-    const nameInp = document.querySelector(".expense-name-input");
-    const expCatg = expCard.querySelector(".expense-catg");
-    const catgInput = document.querySelector(".expense-category-input");
-    const expAmount = expCard.querySelector(".expense-amount");
-    const amountInput = document.querySelector(".amount-input");
-    const expDate = expCard.querySelector(".expense-date");
-    const dateInput = document.querySelector(".date-input");
 
-    expName.textContent = nameInp.value
+    const nameInp = document.querySelector(".expense-name-input").value.trim();
+    const catgInput = document.querySelector(".expense-category-input").value.trim();
+    const amountInput = Number(document.querySelector(".amount-input").value.trim());
+    const dateInput = document.querySelector(".date-input").value;
+
+    if(!catgInput || !dateInput || !nameInp || !amountInput) return;
+
+    if(!inputValidation(nameInp, amountInput)) return;
+
+    console.log(expCardId, typeof(expCardId))
+    const expense = expenseArr.find((expense)=>{
+        return expense.id === expCardId
+    });
+    
+    if(!expense) return;
+    
+    expense.name = nameInp;
+    expense.category = catgInput;
+    expense.amount = amountInput;
+    expense.date = dateInput;
+
+    saveToStorage()
+    closeEditingMode();
+    initialRender();
 }
 function closeEditingMode() {
     overlay.classList.remove("open")
@@ -153,7 +165,7 @@ expenseContainer.addEventListener("click", (e) => {
     const expCard = e.target.closest(".card");
     if (!expCard) return;
 
-    const expCardId = expCard.dataset.id;
+    const expCardId = Number(expCard.dataset.id);
 
     if (action === "edit") manageAction(expCard, expCardId)
 })
