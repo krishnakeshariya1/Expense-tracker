@@ -171,38 +171,6 @@ main .banner .right-content .box {
   border-radius: var(--border-r-md);
 }
 
-/* ------- Category Section ------- */
-.categories {
-  flex-direction: column;
-  align-items: start;
-  justify-content: space-between;
-  gap: var(--padding-3xl);
-}
-
-.categories h3 {
-  color: var(--body-background-Color);
-  font-size: var(--font-2xl);
-  font-weight: 500;
-}
-
-.categories .categoryList ul {
-  list-style-type: none;
-  color: var(--primary-Color);
-  gap: var(--padding-2xl);
-}
-
-.categories .categoryList ul li {
-  background-color: var(--banner-bg-Color);
-  padding: var(--padding-s) var(--padding-md);
-  border-radius: var(--border-r-s);
-  font-size: var(--font-md);
-}
-
-.categories .categoryList ul li:hover {
-  background-color: var(--hover-bg-color);
-  scale: 1.1;
-}
-
 .expense-container {
   flex-direction: column;
   justify-content: center;
@@ -273,11 +241,15 @@ aside .filter-section {
   gap: var(--padding-xl);
 }
 
-aside h3 {
-  font-size: var(--font-2xl);
+aside p {
+  font-size: var(--font-xl);
   margin-bottom: var(--padding-xs);
 }
-
+aside .filter-section{
+  display: flex;
+  align-items: start;
+  gap: var(--heading-Size);
+}
 aside .date-filter input {
   padding: var(--padding-s) var(--padding-md);
   border: 1px solid var(--main-bg-Color);

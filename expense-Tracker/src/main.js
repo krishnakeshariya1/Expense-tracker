@@ -10,6 +10,10 @@ const expenseDateInput = document.querySelector("#expDate");
 const inputBox = document.querySelector(".input-box");
 const overlay = document.getElementById('overlay');
 const errorEl = document.querySelector("#errorEl");
+const searchBar = document.querySelector("#seachBar");
+const dateFilter = document.querySelector("#dateFilter");
+const categoryFilter = document.querySelector("#byCatg");
+const priceFilter = document.querySelector("#price-range");
 
 // -------- Regex -------- //
 const nameRegex = /^[A-Za-z][A-Za-z\s]{1,29}$/;
@@ -101,7 +105,7 @@ function inputValidation(expName, expAmount) {
     }
     return true;
 }
-// -------- Mange Action -------- //
+// -------- Manage Action -------- //
 function manageAction(expCard, expCardId) {
     enterEditingMode(expCard, expCardId);
 
@@ -113,6 +117,7 @@ function manageAction(expCard, expCardId) {
         if (action === "cancel") closeEditingMode();
     });
 }
+// -------- Enter Editing mode --------- //
 function enterEditingMode(expCard, expCardId) {
 
     overlay.classList.add('open');
@@ -135,6 +140,7 @@ function enterEditingMode(expCard, expCardId) {
     amountInput.value = expAmount.textContent;
     dateInput.value = expDate.textContent;
 }
+// -------- Save expense -------- //
 function saveExp(expCard, expCardId) {
 
     const nameInp = document.querySelector(".expense-name-input").value.trim();
@@ -162,9 +168,11 @@ function saveExp(expCard, expCardId) {
     closeEditingMode();
     initialRender();
 }
+// -------- Close editing mode -------- //
 function closeEditingMode() {
     overlay.classList.remove("open")
 }
+// -------- Delete expense -------- //
 function deleteExp(expCard, expCardId) {
     expenseArr = expenseArr.filter((exp)=>{
          return exp.id !== expCardId;
@@ -173,6 +181,32 @@ function deleteExp(expCard, expCardId) {
     saveToStorage();
     expCard.remove()
 }
+function applyFilter() {
+    let result = [ ...expenseArr];
+
+    const catgVal = categoryFilter.value.toLowerCase();
+    const priceVal = parseFloat(priceFilter.value);
+    const dateVal = dateFilter.value;
+    const searchVal = searchBar.value.trim().toLowerCase()
+    
+    if(catgVal !== "all"){
+        result = result.filter((exp)=>{
+           return exp.category === catgVal;
+        })
+    }
+    if(priceVal !== 0){
+        result = result.filter((exp)=>{
+            return exp.amount < priceVal;
+        })
+    }
+    console.log(dateVal)
+    
+}
+function applyAndRender(){
+    initialRender(applyFilter);
+}
+
+// -------- Event Handlers -------- //
 expenseContainer.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
     if (!action) return;
@@ -185,6 +219,13 @@ expenseContainer.addEventListener("click", (e) => {
     if (action === "edit") manageAction(expCard, expCardId);
     if(action === "delete") deleteExp( expCard, expCardId);
 })
+
 addExpBtn.addEventListener("click", addExpense);
+searchBar.addEventListener("input",applyFilter );
+dateFilter.addEventListener("change",applyFilter);
+categoryFilter.addEventListener("change",applyFilter);
+priceFilter.addEventListener("change",applyFilter);
+
+// -------- Initial rendering -------- //
 initialRender();
 
