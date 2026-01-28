@@ -46,11 +46,11 @@ function createExpenseNode(expense) {
     return card;
 }
 // -------- Initial render -------- //
-function initialRender() {
+function initialRender(expArr = expenseArr) {
     expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
-    expenseArr.forEach(exp => {
+    expArr.forEach(exp => {
         fragment.appendChild(createExpenseNode(exp));
     });
 
@@ -164,13 +164,14 @@ function saveExp(expCard, expCardId) {
     expense.amount = amountInput;
     expense.date = dateInput;
 
-    saveToStorage()
     closeEditingMode();
+    saveToStorage()
     initialRender();
 }
 // -------- Close editing mode -------- //
 function closeEditingMode() {
-    overlay.classList.remove("open")
+    overlay.classList.remove("open");
+    isEditing = null;
 }
 // -------- Delete expense -------- //
 function deleteExp(expCard, expCardId) {
@@ -182,28 +183,39 @@ function deleteExp(expCard, expCardId) {
     expCard.remove()
 }
 function applyFilter() {
-    let result = [ ...expenseArr];
+    let result = [...expenseArr];
 
-    const catgVal = categoryFilter.value.toLowerCase();
-    const priceVal = parseFloat(priceFilter.value);
+    const expCatg = expenseCategoryInput.value.trim().toLowerCase();
+    const priceInput = priceFilter.value;
+    const priceVal = parseFloat(priceInput);
     const dateVal = dateFilter.value;
-    const searchVal = searchBar.value.trim().toLowerCase()
-    
-    if(catgVal !== "all"){
-        result = result.filter((exp)=>{
-           return exp.category === catgVal;
-        })
+    const searchVal = searchBar.value.trim().toLowerCase();
+
+    if (expCatg !== "all") {
+        result = result.filter(
+            exp => exp.category.toLowerCase() === expCatg
+        )
     }
-    if(priceVal !== 0){
-        result = result.filter((exp)=>{
-            return exp.amount < priceVal;
-        })
+
+    if (priceInput !== "" && !Number.isNaN(priceVal)) {
+        result = result.filter(exp => exp.amount <= priceVal);
     }
-    console.log(dateVal)
-    
+
+    if (dateVal !== "") {
+        result = result.filter(exp => exp.date === dateVal);
+    }
+
+    if (searchVal !== "") {
+        result = result.filter(exp =>
+            exp.name.toLowerCase().includes(searchVal)
+        );
+    }
+
+    return result;
 }
+
 function applyAndRender(){
-    initialRender(applyFilter);
+    initialRender(applyFilter());
 }
 
 // -------- Event Handlers -------- //
@@ -221,10 +233,10 @@ expenseContainer.addEventListener("click", (e) => {
 })
 
 addExpBtn.addEventListener("click", addExpense);
-searchBar.addEventListener("input",applyFilter );
-dateFilter.addEventListener("change",applyFilter);
-categoryFilter.addEventListener("change",applyFilter);
-priceFilter.addEventListener("change",applyFilter);
+searchBar.addEventListener("input",applyAndRender);
+dateFilter.addEventListener("change",applyAndRender);
+categoryFilter.addEventListener("change",applyAndRender);
+priceFilter.addEventListener("change",applyAndRender);
 
 // -------- Initial rendering -------- //
 initialRender();
