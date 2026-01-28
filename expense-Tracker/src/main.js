@@ -1,3 +1,4 @@
+// -------- DOM -------- //
 const expenseContainer = document.querySelector(".expense-container");
 let budgetText = document.querySelector("#budget");
 const categorySelect = document.querySelector("#byPrice");
@@ -10,12 +11,14 @@ const inputBox = document.querySelector(".input-box");
 const overlay = document.getElementById('overlay');
 const errorEl = document.querySelector("#errorEl");
 
+// -------- Regex -------- //
 const nameRegex = /^[A-Za-z][A-Za-z\s]{1,29}$/;
 const amountRegex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
 
-const expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
+let expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
 let isEditing = null;
 
+// -------- Create Node -------- //
 function createExpenseNode(expense) {
     const card = document.createElement("div");
     card.className = `card ${expense.isDone ? "done" : "unDone"}`
@@ -31,7 +34,6 @@ function createExpenseNode(expense) {
                     <p class="expense-date" >${expense.date}</p>
                 </div>
                 <div class="btnArea flex" >
-                <button data-action="toggle">${expense.isDone ? "Undo" : "Done"}</button>
                 <button data-action="edit">Edit</button>
                 <button data-action="delete">Delete</button>
                 </div>
@@ -39,6 +41,7 @@ function createExpenseNode(expense) {
 
     return card;
 }
+// -------- Initial render -------- //
 function initialRender() {
     expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
@@ -49,9 +52,11 @@ function initialRender() {
 
     expenseContainer.appendChild(fragment)
 }
+// -------- save to localStorage -------- //
 function saveToStorage() {
     localStorage.setItem("expenses", JSON.stringify(expenseArr));
 }
+// -------- add Expense -------- //
 function addExpense() {
     const expName = expenseNameInput.value.trim();
     const expCatg = expenseCategoryInput.value.trim();
@@ -82,6 +87,7 @@ function addExpense() {
     expenseCategoryInput.selectIndex = 0;
 
 }
+// -------- check Input -------- //
 function inputValidation(expName, expAmount) {
     if(!nameRegex.test(expName) ){
         errorEl.textContent =
@@ -95,6 +101,7 @@ function inputValidation(expName, expAmount) {
     }
     return true;
 }
+// -------- Mange Action -------- //
 function manageAction(expCard, expCardId) {
     enterEditingMode(expCard, expCardId);
 
@@ -143,7 +150,7 @@ function saveExp(expCard, expCardId) {
     const expense = expenseArr.find((expense)=>{
         return expense.id === expCardId
     });
-    
+
     if(!expense) return;
     
     expense.name = nameInp;
@@ -158,6 +165,14 @@ function saveExp(expCard, expCardId) {
 function closeEditingMode() {
     overlay.classList.remove("open")
 }
+function deleteExp(expCard, expCardId) {
+    expenseArr = expenseArr.filter((exp)=>{
+         return exp.id !== expCardId;
+    });
+
+    saveToStorage();
+    expCard.remove()
+}
 expenseContainer.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
     if (!action) return;
@@ -167,9 +182,9 @@ expenseContainer.addEventListener("click", (e) => {
 
     const expCardId = Number(expCard.dataset.id);
 
-    if (action === "edit") manageAction(expCard, expCardId)
+    if (action === "edit") manageAction(expCard, expCardId);
+    if(action === "delete") deleteExp( expCard, expCardId);
 })
-
 addExpBtn.addEventListener("click", addExpense);
 initialRender();
 
