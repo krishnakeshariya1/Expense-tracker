@@ -47,6 +47,8 @@ function createExpenseNode(expense) {
 }
 // -------- Initial render -------- //
 function initialRender(expArr = expenseArr) {
+    if(!expArr) return;
+
     expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
@@ -77,7 +79,7 @@ function addExpense() {
         category: expCatg,
         amount: expAmount,
         isDone: false,
-        id: Date.now()
+        id: Date.now() 
     }
 
     expenseArr.push(expense);
@@ -105,43 +107,27 @@ function inputValidation(expName, expAmount) {
     }
     return true;
 }
-// -------- Manage Action -------- //
-function manageAction(expCard, expCardId) {
-    enterEditingMode(expCard, expCardId);
-
-    inputBox.addEventListener("click", (e) => {
-        const action = e.target.dataset.action;
-        if (!action) return;
-
-        if (action === "save") saveExp(expCard, expCardId);
-        if (action === "cancel") closeEditingMode();
-    });
-}
 // -------- Enter Editing mode --------- //
 function enterEditingMode(expCard, expCardId) {
 
-    overlay.classList.add('open');
-
     if (isEditing !== null) return;
 
+    overlay.classList.add('open');
     isEditing = expCardId;
 
-    const expName = expCard.querySelector(".expense-name")
-    const nameInp = document.querySelector(".expense-name-input");
+    const expName = expCard.querySelector(".expense-name");
     const expCatg = expCard.querySelector(".expense-catg");
-    const catgInput = document.querySelector(".expense-category-input");
     const expAmount = expCard.querySelector(".expense-amount");
-    const amountInput = document.querySelector(".amount-input");
     const expDate = expCard.querySelector(".expense-date");
-    const dateInput = document.querySelector(".date-input");
 
-    nameInp.value = expName.textContent;
-    catgInput.value = expCatg.textContent;
-    amountInput.value = expAmount.textContent;
-    dateInput.value = expDate.textContent;
+    document.querySelector(".expense-name-input").value = expName.textContent;
+    document.querySelector(".expense-category-input").value = expCatg.textContent;
+    document.querySelector(".amount-input").value = expAmount.textContent;
+    document.querySelector(".date-input").value = expDate.textContent;
+
 }
 // -------- Save expense -------- //
-function saveExp(expCard, expCardId) {
+function saveExp(expCardId) {
 
     const nameInp = document.querySelector(".expense-name-input").value.trim();
     const catgInput = document.querySelector(".expense-category-input").value.trim();
@@ -151,27 +137,26 @@ function saveExp(expCard, expCardId) {
     if(!catgInput || !dateInput || !nameInp || !amountInput) return;
 
     if(!inputValidation(nameInp, amountInput)) return;
-
-    console.log(expCardId, typeof(expCardId))
-    const expense = expenseArr.find((expense)=>{
-        return expense.id === expCardId
+    
+    const expCard = expenseArr.find((exp)=>{
+        return exp.id === expCardId;
     });
 
-    if(!expense) return;
+    if(!expCard) return;
     
-    expense.name = nameInp;
-    expense.category = catgInput;
-    expense.amount = amountInput;
-    expense.date = dateInput;
+    expCard.name = nameInp;
+    expCard.category = catgInput;
+    expCard.amount = amountInput;
+    expCard.date = dateInput;
 
-    closeEditingMode();
     saveToStorage()
+    closeEditingMode();
     initialRender();
 }
 // -------- Close editing mode -------- //
 function closeEditingMode() {
-    overlay.classList.remove("open");
     isEditing = null;
+    overlay.classList.remove("open");
 }
 // -------- Delete expense -------- //
 function deleteExp(expCard, expCardId) {
@@ -182,6 +167,7 @@ function deleteExp(expCard, expCardId) {
     saveToStorage();
     expCard.remove()
 }
+// -------- Apply filter -------- //
 function applyFilter() {
     let result = [...expenseArr];
 
@@ -213,7 +199,7 @@ function applyFilter() {
 
     return result;
 }
-
+// --------- apply and render -------- //
 function applyAndRender(){
     initialRender(applyFilter());
 }
@@ -228,9 +214,21 @@ expenseContainer.addEventListener("click", (e) => {
 
     const expCardId = Number(expCard.dataset.id);
 
-    if (action === "edit") manageAction(expCard, expCardId);
+    if (action === "edit") enterEditingMode(expCard, expCardId);
     if(action === "delete") deleteExp( expCard, expCardId);
 })
+inputBox.addEventListener("click", (e) => {
+    const action = e.target.dataset.action;
+    if (!action) return;
+
+    if (action === "save" && isEditing !== null) {
+        saveExp(isEditing);
+    }
+
+    if (action === "cancel") {
+        closeEditingMode();
+    }
+});
 
 addExpBtn.addEventListener("click", addExpense);
 searchBar.addEventListener("input",applyAndRender);
@@ -240,4 +238,3 @@ priceFilter.addEventListener("change",applyAndRender);
 
 // -------- Initial rendering -------- //
 initialRender();
-
