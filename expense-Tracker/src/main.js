@@ -21,6 +21,7 @@ const amountRegex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
 
 let expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
 let isEditing = null;
+let totalBudget = 500;
 
 // -------- Create Node -------- //
 function createExpenseNode(expense) {
@@ -56,11 +57,25 @@ function initialRender(expArr) {
         fragment.appendChild(createExpenseNode(exp));
     });
 
-    expenseContainer.appendChild(fragment)
+    expenseContainer.appendChild(fragment);
+    budgetText.textContent = totalBudget- checkBudget();
 }
 // -------- save to localStorage -------- //
 function saveToStorage() {
     localStorage.setItem("expenses", JSON.stringify(expenseArr));
+}
+function checkBudget() {
+    let currentBudget = 0;
+
+    expenseArr.forEach(exp => {
+        currentBudget += exp.amount;
+    })
+
+    budgetText.textContent = `${totalBudget - currentBudget}`
+    totalBudget = totalBudget-currentBudget;
+    console.log(totalBudget)
+
+    return currentBudget;
 }
 // -------- add Expense -------- //
 function addExpense() {
@@ -72,6 +87,8 @@ function addExpense() {
     if (!expCatg || !expDate) return;
 
     if (!inputValidation(expName, expAmount)) return false;
+
+    if(expAmount > totalBudget) return false;
 
     expenseArr.push({
         name: expName,
@@ -173,7 +190,7 @@ function applyFilter() {
 
     const expCatg = categoryFilter.value.trim().toLowerCase();
     const priceInput = priceFilter.value;
-    console.log(typeof(priceInput))
+    console.log(typeof (priceInput))
     const priceVal = parseFloat(priceInput);
     const dateVal = dateFilter.value;
     const searchVal = searchBar.value.trim().toLowerCase();
@@ -241,3 +258,4 @@ priceFilter.addEventListener("change", applyAndRender);
 
 // -------- Initial rendering -------- //
 initialRender(expenseArr);
+checkBudget()
