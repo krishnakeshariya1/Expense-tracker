@@ -46,8 +46,8 @@ function createExpenseNode(expense) {
     return card;
 }
 // -------- Initial render -------- //
-function initialRender(expArr = expenseArr) {
-    if(!expArr) return;
+function initialRender(expArr) {
+    if (!expArr) return;
 
     expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
@@ -71,21 +71,21 @@ function addExpense() {
 
     if (!expCatg || !expDate) return;
 
-    if(!inputValidation(expName, expAmount)) return false;
+    if (!inputValidation(expName, expAmount)) return false;
 
-    const expense = {
+    expenseArr.push({
         name: expName,
         date: expDate,
         category: expCatg,
         amount: expAmount,
         isDone: false,
-        id: Date.now() 
-    }
+        id: Date.now()
+    });
 
-    expenseArr.push(expense);
     saveToStorage();
+    applyAndRender()
 
-    expenseContainer.appendChild(createExpenseNode(expense));
+    // expenseContainer.appendChild(createExpenseNode(expense));
 
     expenseAmountInput.value = "";
     expenseNameInput.value = "";
@@ -95,14 +95,14 @@ function addExpense() {
 }
 // -------- check Input -------- //
 function inputValidation(expName, expAmount) {
-    if(!nameRegex.test(expName) ){
+    if (!nameRegex.test(expName)) {
         errorEl.textContent =
-        "Enter a valide Input (under 30 chars)"
+            "Enter a valide Input (under 30 chars)"
         return false;
     }
-    if(!amountRegex.test(expAmount) || expAmount <= 0 || Number.isNaN(expAmount)){
+    if (!amountRegex.test(expAmount) || expAmount <= 0 || Number.isNaN(expAmount)) {
         errorEl.textContent =
-        "Invalid amount (max 2 decimals)";
+            "Invalid amount (max 2 decimals)";
         return false
     }
     return true;
@@ -134,16 +134,16 @@ function saveExp(expCardId) {
     const amountInput = Number(document.querySelector(".amount-input").value.trim());
     const dateInput = document.querySelector(".date-input").value;
 
-    if(!catgInput || !dateInput || !nameInp || !amountInput) return;
+    if (!catgInput || !dateInput || !nameInp || !amountInput) return;
 
-    if(!inputValidation(nameInp, amountInput)) return;
-    
-    const expCard = expenseArr.find((exp)=>{
+    if (!inputValidation(nameInp, amountInput)) return;
+
+    const expCard = expenseArr.find((exp) => {
         return exp.id === expCardId;
     });
 
-    if(!expCard) return;
-    
+    if (!expCard) return;
+
     expCard.name = nameInp;
     expCard.category = catgInput;
     expCard.amount = amountInput;
@@ -151,7 +151,7 @@ function saveExp(expCardId) {
 
     saveToStorage()
     closeEditingMode();
-    initialRender();
+    initialRender(expenseArr);
 }
 // -------- Close editing mode -------- //
 function closeEditingMode() {
@@ -160,8 +160,8 @@ function closeEditingMode() {
 }
 // -------- Delete expense -------- //
 function deleteExp(expCard, expCardId) {
-    expenseArr = expenseArr.filter((exp)=>{
-         return exp.id !== expCardId;
+    expenseArr = expenseArr.filter((exp) => {
+        return exp.id !== expCardId;
     });
 
     saveToStorage();
@@ -171,8 +171,9 @@ function deleteExp(expCard, expCardId) {
 function applyFilter() {
     let result = [...expenseArr];
 
-    const expCatg = expenseCategoryInput.value.trim().toLowerCase();
+    const expCatg = categoryFilter.value.trim().toLowerCase();
     const priceInput = priceFilter.value;
+    console.log(typeof(priceInput))
     const priceVal = parseFloat(priceInput);
     const dateVal = dateFilter.value;
     const searchVal = searchBar.value.trim().toLowerCase();
@@ -183,7 +184,7 @@ function applyFilter() {
         )
     }
 
-    if (priceInput !== "" && !Number.isNaN(priceVal)) {
+    if (priceInput !== "100" && !Number.isNaN(priceVal)) {
         result = result.filter(exp => exp.amount <= priceVal);
     }
 
@@ -199,8 +200,9 @@ function applyFilter() {
 
     return result;
 }
+
 // --------- apply and render -------- //
-function applyAndRender(){
+function applyAndRender() {
     initialRender(applyFilter());
 }
 
@@ -215,8 +217,9 @@ expenseContainer.addEventListener("click", (e) => {
     const expCardId = Number(expCard.dataset.id);
 
     if (action === "edit") enterEditingMode(expCard, expCardId);
-    if(action === "delete") deleteExp( expCard, expCardId);
+    if (action === "delete") deleteExp(expCard, expCardId);
 })
+
 inputBox.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
     if (!action) return;
@@ -231,10 +234,10 @@ inputBox.addEventListener("click", (e) => {
 });
 
 addExpBtn.addEventListener("click", addExpense);
-searchBar.addEventListener("input",applyAndRender);
-dateFilter.addEventListener("change",applyAndRender);
-categoryFilter.addEventListener("change",applyAndRender);
-priceFilter.addEventListener("change",applyAndRender);
+searchBar.addEventListener("input", applyAndRender);
+dateFilter.addEventListener("change", applyAndRender);
+categoryFilter.addEventListener("change", applyAndRender);
+priceFilter.addEventListener("change", applyAndRender);
 
 // -------- Initial rendering -------- //
-initialRender();
+initialRender(expenseArr);

@@ -69,6 +69,7 @@ body {
     "footer footer footer";
   background-color: var(--body-background-Color);
   padding: var(--padding-s);
+  overflow: hidden;
 }
 
 /* ------- Reusable Clases ------- */
@@ -98,6 +99,7 @@ li {
   padding: var(--padding-l) var(--padding-3xl);
   flex-direction: column;
   gap: var(--padding-3xl);
+  overflow: hidden;
 }
 
 /* ------- Header ------- */
@@ -127,6 +129,7 @@ header input {
 /* ------- Main ------- */
 main {
   flex-direction: column;
+  overflow: hidden;
 }
 
 main .banner {
@@ -178,6 +181,7 @@ main .banner .right-content .box {
   border: 2px solid var(--secondary-color);
   border-radius: var(--border-r-l);
   padding: var(--padding-l) var(--padding-xl);
+  overflow: hidden;
 }
 
 .expense-container .card {
