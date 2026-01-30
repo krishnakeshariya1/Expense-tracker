@@ -19,10 +19,29 @@ const priceFilter = document.querySelector("#price-range");
 const nameRegex = /^[A-Za-z][A-Za-z\s]{1,29}$/;
 const amountRegex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
 
-let expenseArr = JSON.parse(localStorage.getItem("expenses")) || [];
-let isEditing = null;
-let totalBudget = 500;
+// -------- constant -------- //
+const TOTAL_BUDGET = 500;
 
+// -------- STATE -------- //
+const state = {
+    expenseArr : JSON.parse(localStorage.getItem("expenses")) || [],
+    isEditing : null,
+    filters : {
+        category : "all",
+        price : 100,
+        date : "",
+        search : "",
+    }
+};
+
+// -------- get Total spent -------- //
+function getTotalSpent() {
+    return state.expenseArr.reduce((sum, exp)=> sum + exp.amount , 0);
+}
+// -------- Get Remaining Budget -------- //
+function getRemainingBudget() {
+    return TOTAL_BUDGET - getTotalSpent()
+}
 // -------- Create Node -------- //
 function createExpenseNode(expense) {
     const card = document.createElement("div");
@@ -47,35 +66,21 @@ function createExpenseNode(expense) {
     return card;
 }
 // -------- Initial render -------- //
-function initialRender(expArr) {
-    if (!expArr) return;
+function initialRender() {
+    budgetText.textContent = getRemainingBudget();
 
     expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
-    expArr.forEach(exp => {
+    getFilteredExpense.forEach(exp => {
         fragment.appendChild(createExpenseNode(exp));
     });
 
     expenseContainer.appendChild(fragment);
-    budgetText.textContent = totalBudget- checkBudget();
 }
 // -------- save to localStorage -------- //
 function saveToStorage() {
-    localStorage.setItem("expenses", JSON.stringify(expenseArr));
-}
-function checkBudget() {
-    let currentBudget = 0;
-
-    expenseArr.forEach(exp => {
-        currentBudget += exp.amount;
-    })
-
-    budgetText.textContent = `${totalBudget - currentBudget}`
-    totalBudget = totalBudget-currentBudget;
-    console.log(totalBudget)
-
-    return currentBudget;
+    localStorage.setItem("expenses", JSON.stringify(state.expenseArr));
 }
 // -------- add Expense -------- //
 function addExpense() {
