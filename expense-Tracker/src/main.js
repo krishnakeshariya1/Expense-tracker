@@ -24,19 +24,19 @@ const TOTAL_BUDGET = 500;
 
 // -------- STATE -------- //
 const state = {
-    expenseArr : JSON.parse(localStorage.getItem("expenses")) || [],
-    isEditing : null,
-    filters : {
-        category : "all",
-        price : 100,
-        date : "",
-        search : "",
+    expenseArr: JSON.parse(localStorage.getItem("expenses")) || [],
+    isEditing: null,
+    filters: {
+        category: "all",
+        price: 100,
+        date: "",
+        search: "",
     }
 };
 
 // -------- get Total spent -------- //
 function getTotalSpent() {
-    return state.expenseArr.reduce((sum, exp)=> sum + exp.amount , 0);
+    return state.expenseArr.reduce((sum, exp) => sum + exp.amount, 0);
 }
 // -------- Get Remaining Budget -------- //
 function getRemainingBudget() {
@@ -72,7 +72,7 @@ function initialRender() {
     expenseContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
-    getFilteredExpense.forEach(exp => {
+    applyFilter().forEach(exp => {
         fragment.appendChild(createExpenseNode(exp));
     });
 
@@ -93,27 +93,23 @@ function addExpense() {
 
     if (!inputValidation(expName, expAmount)) return false;
 
-    if(expAmount > totalBudget) return false;
+    if (expAmount > getRemainingBudget()) return false;
 
-    expenseArr.push({
+    state.expenseArr.push({
         name: expName,
         date: expDate,
         category: expCatg,
         amount: expAmount,
-        isDone: false,
         id: Date.now()
     });
 
     saveToStorage();
-    applyAndRender()
-
-    // expenseContainer.appendChild(createExpenseNode(expense));
+    initialRender();
 
     expenseAmountInput.value = "";
     expenseNameInput.value = "";
     expenseDateInput.value = "";
-    expenseCategoryInput.selectIndex = 0;
-
+    expenseCategoryInput.selectedIndex = 0;
 }
 // -------- check Input -------- //
 function inputValidation(expName, expAmount) {
@@ -127,107 +123,64 @@ function inputValidation(expName, expAmount) {
             "Invalid amount (max 2 decimals)";
         return false
     }
+    errorEl.textContent = "";
     return true;
 }
 // -------- Enter Editing mode --------- //
-function enterEditingMode(expCard, expCardId) {
+function enterEditingMode(expCardId) {
+    const exp = state.expenseArr.find(exp => exp.id === expCardId);
 
-    if (isEditing !== null) return;
+    if (!exp) return;
 
+    state.isEditing = expCardId;
     overlay.classList.add('open');
-    isEditing = expCardId;
 
-    const expName = expCard.querySelector(".expense-name");
-    const expCatg = expCard.querySelector(".expense-catg");
-    const expAmount = expCard.querySelector(".expense-amount");
-    const expDate = expCard.querySelector(".expense-date");
-
-    document.querySelector(".expense-name-input").value = expName.textContent;
-    document.querySelector(".expense-category-input").value = expCatg.textContent;
-    document.querySelector(".amount-input").value = expAmount.textContent;
-    document.querySelector(".date-input").value = expDate.textContent;
-
+    document.querySelector(".expense-name-input").value = exp.name;
+    document.querySelector(".expense-category-input").value = exp.category;
+    document.querySelector(".amount-input").value = exp.amount;
+    document.querySelector(".date-input").value = exp.date;
 }
 // -------- Save expense -------- //
-function saveExp(expCardId) {
+function saveExp() {
+    const exp = state.expenseArr.find(exp => exp.id === state.isEditing);
+    if (!exp) return
+    const name = document.querySelector(".expense-name-input").value.trim();
+    const catg = document.querySelector(".expense-category-input").value.trim();
+    const amount = Number(document.querySelector(".amount-input").value.trim());
+    const date = document.querySelector(".date-input").value;
 
-    const nameInp = document.querySelector(".expense-name-input").value.trim();
-    const catgInput = document.querySelector(".expense-category-input").value.trim();
-    const amountInput = Number(document.querySelector(".amount-input").value.trim());
-    const dateInput = document.querySelector(".date-input").value;
+    if (!inputValidation(name, amount)) return;
 
-    if (!catgInput || !dateInput || !nameInp || !amountInput) return;
-
-    if (!inputValidation(nameInp, amountInput)) return;
-
-    const expCard = expenseArr.find((exp) => {
-        return exp.id === expCardId;
-    });
-
-    if (!expCard) return;
-
-    expCard.name = nameInp;
-    expCard.category = catgInput;
-    expCard.amount = amountInput;
-    expCard.date = dateInput;
+    exp.name = name;
+    exp.category = catg;
+    exp.amount = amount;
+    exp.date = date;
 
     saveToStorage()
     closeEditingMode();
-    initialRender(expenseArr);
+    initialRender()
 }
 // -------- Close editing mode -------- //
 function closeEditingMode() {
-    isEditing = null;
+    state.isEditing = null;
     overlay.classList.remove("open");
 }
 // -------- Delete expense -------- //
-function deleteExp(expCard, expCardId) {
-    expenseArr = expenseArr.filter((exp) => {
-        return exp.id !== expCardId;
-    });
-
+function deleteExp(expCardId) {
+    state.expenseArr = state.expenseArr.filter(exp => exp.id !== expCardId);
     saveToStorage();
-    expCard.remove()
+    initialRender()
 }
 // -------- Apply filter -------- //
 function applyFilter() {
-    let result = [...expenseArr];
-
-    const expCatg = categoryFilter.value.trim().toLowerCase();
-    const priceInput = priceFilter.value;
-    console.log(typeof (priceInput))
-    const priceVal = parseFloat(priceInput);
-    const dateVal = dateFilter.value;
-    const searchVal = searchBar.value.trim().toLowerCase();
-
-    if (expCatg !== "all") {
-        result = result.filter(
-            exp => exp.category.toLowerCase() === expCatg
-        )
-    }
-
-    if (priceInput !== "100" && !Number.isNaN(priceVal)) {
-        result = result.filter(exp => exp.amount <= priceVal);
-    }
-
-    if (dateVal !== "") {
-        result = result.filter(exp => exp.date === dateVal);
-    }
-
-    if (searchVal !== "") {
-        result = result.filter(exp =>
-            exp.name.toLowerCase().includes(searchVal)
-        );
-    }
-
-    return result;
+    return state.expenseArr.filter(exp => {
+        if (state.filters.category !== "all" && state.filters.category !== exp.category) return false;
+        if (exp.amount > state.filters.price) return false;
+        if (state.filters.date && exp.date !== state.filters.date) return false;
+        if (state.filters.search && !exp.name.toLowerCase().includes(state.filters.search)) return false;
+        return true;
+    });
 }
-
-// --------- apply and render -------- //
-function applyAndRender() {
-    initialRender(applyFilter());
-}
-
 // -------- Event Handlers -------- //
 expenseContainer.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
@@ -238,16 +191,16 @@ expenseContainer.addEventListener("click", (e) => {
 
     const expCardId = Number(expCard.dataset.id);
 
-    if (action === "edit") enterEditingMode(expCard, expCardId);
-    if (action === "delete") deleteExp(expCard, expCardId);
+    if (action === "edit") enterEditingMode(expCardId);
+    if (action === "delete") deleteExp(expCardId);
 })
 
 inputBox.addEventListener("click", (e) => {
     const action = e.target.dataset.action;
     if (!action) return;
 
-    if (action === "save" && isEditing !== null) {
-        saveExp(isEditing);
+    if (action === "save" && state.isEditing !== null) {
+        saveExp();
     }
 
     if (action === "cancel") {
@@ -256,11 +209,23 @@ inputBox.addEventListener("click", (e) => {
 });
 
 addExpBtn.addEventListener("click", addExpense);
-searchBar.addEventListener("input", applyAndRender);
-dateFilter.addEventListener("change", applyAndRender);
-categoryFilter.addEventListener("change", applyAndRender);
-priceFilter.addEventListener("change", applyAndRender);
+searchBar.addEventListener("input", e => {
+    state.filters.search = e.target.value.toLowerCase();
+    initialRender()
+});
+
+dateFilter.addEventListener("change", e => {
+    state.filters.date = e.target.value;
+    initialRender();
+});
+categoryFilter.addEventListener("change", e => {
+    state.filters.category = e.target.value;
+    initialRender()
+});
+priceFilter.addEventListener("change", e => {
+    state.filters.price = Number(e.target.value);
+    initialRender()
+});
 
 // -------- Initial rendering -------- //
-initialRender(expenseArr);
-checkBudget()
+initialRender();
